@@ -1,11 +1,8 @@
 package com.johnmsaylor.console;
 
 import com.johnmsaylor.map.Map;
-import com.johnmsaylor.map.MapGrid;
-import com.johnmsaylor.map.Position;
-import com.johnmsaylor.player.Player;
 
-import java.util.List;
+import java.util.Scanner;
 
 public class Console {
 
@@ -23,4 +20,19 @@ public class Console {
             System.out.println();
             }
         }
+
+    public static int[] inputMove() {
+        int[] result = new int[2];
+        int direction;
+        int steps;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("| 0 - N | 1 - E | 2 - S | 3 - W | Type direction, then number of steps");
+        String input = scanner.next();
+        direction = Integer.parseInt(input.substring(0,1));
+        steps = Integer.parseInt(input.substring(1).strip());
+        result[0] = direction;
+        result[1] = steps;
+        return result;
     }
+
+}

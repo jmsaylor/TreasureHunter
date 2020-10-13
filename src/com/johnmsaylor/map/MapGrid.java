@@ -13,6 +13,11 @@ public class MapGrid {
         mapGrid[treasurePosition.getY()][treasurePosition.getX()] = 'T';
     }
 
+    public MapGrid(Position treasurePosition, int mapSize) {
+        mapGrid = new char[mapSize][mapSize];
+        mapGrid[treasurePosition.getY()][treasurePosition.getX()] = 'T';
+    }
+
     public char[][] getMapGrid() {
         return mapGrid;
     }
