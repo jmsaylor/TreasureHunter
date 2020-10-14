@@ -1,15 +1,19 @@
 package com.johnmsaylor.map;
 
-import com.johnmsaylor.console.Console;
+import com.johnmsaylor.console.Input;
+import com.johnmsaylor.console.Output;
 import com.johnmsaylor.player.Player;
 import com.johnmsaylor.utility.CollisionDetection;
+import com.johnmsaylor.utility.Detection;
+import com.johnmsaylor.utility.Random;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Map {
+    private Input input;
+    private Output output;
+    private Random random;
+    private Detection detection;
     public int mapSize;
     public Queue<Player> playerQueue = new LinkedList<>();
     public Position treasurePosition;
@@ -32,27 +36,41 @@ public class Map {
         this.mapGrid = new MapGrid(treasurePosition,mapSize);
     }
 
-    public Map(List<Player> players, Position treasurePosition, List<Position> obstacles, int size) {
+    public Map(List<Player> players, Position treasurePosition, List<Position> obstacles, int mapSize) {
         for (var player : players){
             this.playerQueue.add(player);
         }
         this.treasurePosition = treasurePosition;
         this.currentPlayer = this.playerQueue.poll();
         this.obstacles = obstacles;
-        this.mapSize = size;
-        this.mapGrid = new MapGrid(obstacles,treasurePosition,mapSize);
+        this.mapSize = mapSize;
+        this.mapGrid = new MapGrid(obstacles,treasurePosition, this.mapSize);
+    }
+
+    public Map(Input input, Output output, Random random, Detection detection) {
+        this.input = input;
+        this.output = output;
+        this.random = random;
+        this.detection = detection;
+        this.mapSize = input.inputMapSize();
+        this.currentPlayer = input.inputPlayer();
+        this.obstacles = random.randomObstacles(2,mapSize);
+        this.treasurePosition = random.randomTreasure(mapSize);
+        this.mapGrid = new MapGrid(obstacles,treasurePosition, mapSize);
+        output.showMap(this);
     }
 
     public void processMove(Player player, int direction, int steps){
-        if (CollisionDetection.detect(player, direction, steps, mapGrid.getMapGrid(), 'X')){
-            System.out.println("Obstacle Collision, you must restart.");
-            System.exit(1);
+        if (detection.collision(player, direction, steps, mapGrid.getMapGrid(), 'X')){
+            System.out.println("Obstacle Collision");
+//            System.exit(1);
         }
-        if (CollisionDetection.detect(player, direction, steps, mapGrid.getMapGrid(), 'T')) {
+        if (detection.collision(player, direction, steps, mapGrid.getMapGrid(), 'T')) {
             System.out.println("YOU FOUND THE TREASURE!" + new String(Character.toChars(0x1F3C4)));
-            System.exit(1);
+//            System.exit(1);
         }
         movePlayer(player, direction, steps);
+        output.showMap(this);
     }
 
     public void nextPlayer() {
@@ -85,6 +103,15 @@ public class Map {
         }
     }
 
+    public void play(){
+        Scanner scanner = new Scanner(System.in);
+        do {
+            int[] move = input.inputMove();
+            processMove(currentPlayer, move[0], move[1]);
+            System.out.println("Enter c to continue");
+        } while (scanner.next().matches("c"));
+    }
+
     public List<Player> getPlayers() {
         var temp = new ArrayList<Player>();
         for (var player : playerQueue) {
@@ -98,11 +125,14 @@ public class Map {
         return obstacles;
     }
 
-    public static void testSinglePlayer(int[] startingPosition, int[][] moves) {
+    public static int[] testSinglePlayer(int[] startingPosition, int[][] moves) {
+        int[] resultingLocation = new int[2];
         int xCoord = startingPosition[0];
         int yCoord = startingPosition[1];
         var map = new Map(new Player("", new Position(xCoord, yCoord)), new Position(4,4), 5);
         map.processMoves(map.currentPlayer, moves);
-        Console.showMap(map);
+        resultingLocation[0] = map.currentPlayer.position.getX();
+        resultingLocation[1] = map.currentPlayer.position.getY();
+        return resultingLocation;
     }
 }

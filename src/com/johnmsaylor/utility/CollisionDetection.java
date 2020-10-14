@@ -1,13 +1,10 @@
 package com.johnmsaylor.utility;
 
-import com.johnmsaylor.map.Position;
 import com.johnmsaylor.player.Player;
 
-import java.util.List;
+public class CollisionDetection implements Detection{
 
-public class CollisionDetection {
-
-    public static boolean detect(Player player, int direction, int steps, char[][] grid, char objectMarker){
+    public boolean collision(Player player, int direction, int steps, char[][] grid, char objectMarker){
         switch (direction)
         {
             case 0:

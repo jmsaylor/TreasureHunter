@@ -1,12 +1,17 @@
 package com.johnmsaylor.console;
 
 import com.johnmsaylor.map.Map;
+import com.johnmsaylor.map.Position;
+import com.johnmsaylor.player.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-public class Console {
+public class Console implements Input, Output{
+    private Scanner scanner = new Scanner(System.in);
 
-    public static void showMap(Map map) {
+    public void showMap(Map map) {
         char[][] mapGrid = map.mapGrid.getMapGrid();
         for (var player : map.getPlayers()) {
             mapGrid[player.position.getY()][player.position.getX()] = player.getName().charAt(0);
@@ -21,7 +26,7 @@ public class Console {
             }
         }
 
-    public static int[] inputMove() {
+    public int[] inputMove() {
         int[] result = new int[2];
         int direction;
         int steps;
@@ -33,6 +38,29 @@ public class Console {
         result[0] = direction;
         result[1] = steps;
         return result;
+    }
+
+    public List<Player> inputNewPlayerList() {
+        int count = 1;
+        List<Player> playerList = new ArrayList<>();
+        do {
+            System.out.println("Enter Player" + count + " name");
+            playerList.add(new Player(scanner.next()));
+            System.out.println("Add another player? Press y and Enter.");
+            count++;
+        } while(scanner.next().matches("y"));
+        return playerList;
+    }
+
+    public Player inputPlayer() {
+        System.out.println("Enter name");
+        return new Player(scanner.next());
+    }
+
+    @Override
+    public int inputMapSize() {
+        System.out.println("How big would you like the map to be?");
+        return scanner.nextInt();
     }
 
 }
