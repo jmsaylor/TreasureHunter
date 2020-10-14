@@ -9,10 +9,11 @@ public class RandomGeneration implements Random {
     private java.util.Random random = new java.util.Random();
 
     public List<Position> randomObstacles(int totalObstacles, int mapSize){
+        mapSize--;
         List<Position> obstacleList = new ArrayList<>();
         for (int obstacle = 0; obstacle < totalObstacles; obstacle++) {
             int xPos = random.nextInt(mapSize);
-            int yPos = random.nextInt(mapSize) + 1;
+            int yPos = random.nextInt(mapSize);
             obstacleList.add(new Position(xPos,yPos));
         }
         return obstacleList;

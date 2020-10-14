@@ -24,6 +24,10 @@ public class Console implements Input, Output{
                 }
             System.out.println();
             }
+
+        for (var player : map.getPlayers()) {
+            mapGrid[player.position.getY()][player.position.getX()] = 'o';
+        }
         }
 
     public int[] inputMove() {
@@ -32,9 +36,10 @@ public class Console implements Input, Output{
         int steps;
         Scanner scanner = new Scanner(System.in);
         System.out.println("| 0 - N | 1 - E | 2 - S | 3 - W | Type direction, then number of steps");
-        String input = scanner.next();
-        direction = Integer.parseInt(input.substring(0,1));
-        steps = Integer.parseInt(input.substring(1).strip());
+        String temp = scanner.nextLine().replaceAll("\\s+", "");
+        System.out.println(temp);
+        direction = Integer.parseInt(temp.substring(0,1));
+        steps = Integer.parseInt(temp.substring(1));
         result[0] = direction;
         result[1] = steps;
         return result;

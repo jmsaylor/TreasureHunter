@@ -3,7 +3,6 @@ package com.johnmsaylor.map;
 import com.johnmsaylor.console.Input;
 import com.johnmsaylor.console.Output;
 import com.johnmsaylor.player.Player;
-import com.johnmsaylor.utility.CollisionDetection;
 import com.johnmsaylor.utility.Detection;
 import com.johnmsaylor.utility.Random;
 
@@ -15,7 +14,7 @@ public class Map {
     private Random random;
     private Detection detection;
     public int mapSize;
-    public Queue<Player> playerQueue = new LinkedList<>();
+    public Deque<Player> playerQueue = new LinkedList<>();
     public Position treasurePosition;
     public List<Position> obstacles;
     public Player currentPlayer;
@@ -70,7 +69,6 @@ public class Map {
 //            System.exit(1);
         }
         movePlayer(player, direction, steps);
-        output.showMap(this);
     }
 
     public void nextPlayer() {
@@ -97,10 +95,23 @@ public class Map {
         }
     }
 
-    public void processMoves(Player player, int[][] moves) {
+    public void processMoves(Player player, int[][] moves, boolean isVisualized) {
         for (int i = 0; i < moves.length; i++) {
             processMove(player, moves[i][0], moves[i][1]);
+            if (isVisualized) {
+                output.showMap(this);
+                System.out.println("--------------------");
+            }
         }
+    }
+
+    public int[] processMoves(int[] startPosition, int[][] moves, boolean isVisualized) {
+        playerQueue.add(currentPlayer);
+        currentPlayer = new Player("Test", new Position(startPosition[0], startPosition[1]));
+        processMoves(currentPlayer, moves,isVisualized);
+        int [] endPosition = {currentPlayer.position.getX(), currentPlayer.position.getY()};
+        currentPlayer = playerQueue.pollLast();
+        return endPosition;
     }
 
     public void play(){
@@ -108,8 +119,9 @@ public class Map {
         do {
             int[] move = input.inputMove();
             processMove(currentPlayer, move[0], move[1]);
-            System.out.println("Enter c to continue");
-        } while (scanner.next().matches("c"));
+            output.showMap(this);
+//            System.out.println("Enter c to continue");
+        } while (!scanner.next().matches("q"));
     }
 
     public List<Player> getPlayers() {
@@ -125,14 +137,19 @@ public class Map {
         return obstacles;
     }
 
-    public static int[] testSinglePlayer(int[] startingPosition, int[][] moves) {
-        int[] resultingLocation = new int[2];
-        int xCoord = startingPosition[0];
-        int yCoord = startingPosition[1];
-        var map = new Map(new Player("", new Position(xCoord, yCoord)), new Position(4,4), 5);
-        map.processMoves(map.currentPlayer, moves);
-        resultingLocation[0] = map.currentPlayer.position.getX();
-        resultingLocation[1] = map.currentPlayer.position.getY();
-        return resultingLocation;
+    public void setRandom(Random random) {
+        this.random = random;
+    }
+
+    public void setDetection(Detection detection) {
+        this.detection = detection;
+    }
+
+    public void setInput(Input input) {
+        this.input = input;
+    }
+
+    public void setOutput(Output output) {
+        this.output = output;
     }
 }
