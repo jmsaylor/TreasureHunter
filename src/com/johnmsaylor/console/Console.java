@@ -57,9 +57,14 @@ public class Console implements Input, Output{
         return playerList;
     }
 
-    public Player inputPlayer() {
+    public Player inputPlayerName() {
         System.out.println("Enter name");
         return new Player(scanner.next());
+    }
+
+    @Override
+    public boolean catchQuitSignal(int[] signal) {
+        return signal[0] == -1 && signal[1] == -1;
     }
 
     @Override

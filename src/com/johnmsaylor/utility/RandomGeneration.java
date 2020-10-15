@@ -8,7 +8,7 @@ import java.util.List;
 public class RandomGeneration implements Random {
     private java.util.Random random = new java.util.Random();
 
-    public List<Position> randomObstacles(int totalObstacles, int mapSize){
+    public List<Position> obstacles(int totalObstacles, int mapSize){
         mapSize--;
         List<Position> obstacleList = new ArrayList<>();
         for (int obstacle = 0; obstacle < totalObstacles; obstacle++) {
@@ -19,14 +19,14 @@ public class RandomGeneration implements Random {
         return obstacleList;
     }
 
-    public Position randomTreasure(int mapSize) {
+    public Position treasurePosition(int mapSize) {
         int xPos = random.nextInt(mapSize);
         int yPos = random.nextInt(mapSize);
         return new Position(xPos,yPos);
     }
 
     @Override
-    public Position randomPlayerPosition(int mapSize) {
+    public Position playerPosition(int mapSize) {
         int xPos = random.nextInt(mapSize);
         int yPos = random.nextInt(mapSize);
         return new Position(xPos,yPos);

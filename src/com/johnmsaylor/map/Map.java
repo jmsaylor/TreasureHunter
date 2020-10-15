@@ -52,14 +52,19 @@ public class Map {
         this.random = random;
         this.detection = detection;
         this.mapSize = input.inputMapSize();
-        this.currentPlayer = input.inputPlayer();
-        this.obstacles = random.randomObstacles(2,mapSize);
-        this.treasurePosition = random.randomTreasure(mapSize);
+        this.currentPlayer = input.inputPlayerName();
+        this.obstacles = random.obstacles(2,mapSize);
+        this.treasurePosition = random.treasurePosition(mapSize);
         this.mapGrid = new MapGrid(obstacles,treasurePosition, mapSize);
         output.showMap(this);
     }
 
     public void processMove(Player player, int direction, int steps){
+        if (detection.edge(player, direction, steps, mapGrid.getMapGrid())) {
+            System.out.println("edge detection");
+
+            return;
+        }
         if (detection.collision(player, direction, steps, mapGrid.getMapGrid(), 'X')){
             System.out.println("Obstacle Collision");
 //            System.exit(1);
@@ -72,7 +77,7 @@ public class Map {
     }
 
     public void nextPlayer() {
-        playerQueue.add(currentPlayer);
+        sendToQueue(currentPlayer);
         currentPlayer = playerQueue.poll();
     }
 
@@ -96,6 +101,7 @@ public class Map {
     }
 
     public void processMoves(Player player, int[][] moves, boolean isVisualized) {
+        output.showMap(this);
         for (int i = 0; i < moves.length; i++) {
             processMove(player, moves[i][0], moves[i][1]);
             if (isVisualized) {
@@ -106,8 +112,8 @@ public class Map {
     }
 
     public int[] processMoves(int[] startPosition, int[][] moves, boolean isVisualized) {
-        playerQueue.add(currentPlayer);
-        currentPlayer = new Player("Test", new Position(startPosition[0], startPosition[1]));
+        sendToQueue(currentPlayer);
+        currentPlayer = new Player("Kay", new Position(startPosition[0], startPosition[1]));
         processMoves(currentPlayer, moves,isVisualized);
         int [] endPosition = {currentPlayer.position.getX(), currentPlayer.position.getY()};
         currentPlayer = playerQueue.pollLast();
@@ -116,12 +122,14 @@ public class Map {
 
     public void play(){
         Scanner scanner = new Scanner(System.in);
-        do {
+        while (true) {
             int[] move = input.inputMove();
+            if (input.catchQuitSignal(move))
+                break;
             processMove(currentPlayer, move[0], move[1]);
             output.showMap(this);
-//            System.out.println("Enter c to continue");
-        } while (!scanner.next().matches("q"));
+//            nextPlayer();
+        }
     }
 
     public List<Player> getPlayers() {
@@ -131,6 +139,12 @@ public class Map {
         }
         temp.add(currentPlayer);
         return temp;
+    }
+
+    private void sendToQueue(Player player) {
+        if (player != null) {
+            playerQueue.add(player);
+        }
     }
 
     public List<Position> getObstacles() {

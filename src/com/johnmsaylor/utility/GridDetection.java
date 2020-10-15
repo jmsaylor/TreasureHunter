@@ -2,7 +2,25 @@ package com.johnmsaylor.utility;
 
 import com.johnmsaylor.player.Player;
 
-public class CollisionDetection implements Detection{
+public class GridDetection implements Detection{
+
+    public boolean edge(Player player, int direction, int steps, char[][] grid) {
+        int xLength = grid[0].length - 1;
+        int yLength = grid.length - 1;
+        switch (direction)
+        {
+            case 0:
+                return player.position.getY() - steps < 0;
+            case 1:
+                return player.position.getX() + steps > xLength;
+            case 2:
+                return player.position.getY() + steps > yLength;
+            case 3:
+                return player.position.getX() - steps < 0;
+            default:
+                return false;
+        }
+    }
 
     public boolean collision(Player player, int direction, int steps, char[][] grid, char objectMarker){
         switch (direction)

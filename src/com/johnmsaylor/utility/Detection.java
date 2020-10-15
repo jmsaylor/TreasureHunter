@@ -4,4 +4,5 @@ import com.johnmsaylor.player.Player;
 
 public interface Detection {
     boolean collision(Player player, int direction, int steps, char[][] grid, char objectMarker);
+    boolean edge(Player player, int direction, int steps, char[][] grid);
 }

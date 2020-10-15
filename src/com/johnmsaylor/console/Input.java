@@ -8,5 +8,6 @@ public interface Input {
     List<Player> inputNewPlayerList();
     int inputMapSize();
     int[] inputMove();
-    Player inputPlayer();
+    Player inputPlayerName();
+    boolean catchQuitSignal(int[] signal);
 }
